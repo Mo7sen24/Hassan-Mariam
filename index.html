@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دعوة زفاف سينمائية تفاعلية</title>
+  
+  <!-- الخطوط العربية والأيقونات -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- شريط التحكم والتعديل -->
+  <aside class="control-panel" id="controlPanel">
+    <div class="panel-header">
+      <span><i class="fa-solid fa-sliders"></i> تخصيص دعوة الزفاف</span>
+      <button id="togglePanelBtn" class="icon-btn" aria-label="تصغير اللوحة"><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+    
+    <div class="panel-body">
+      <div class="input-group">
+        <label><i class="fa-solid fa-image"></i> صورة العروسين (مفرغة PNG):</label>
+        <input type="file" id="coupleImgInput" accept="image/*">
+        <small class="help-text">للحصول على أفضل نتيجة 3D استخدم صورة مفرغة بدون خلفية.</small>
+      </div>
+
+      <div class="input-group">
+        <label><i class="fa-solid fa-mountain-sun"></i> صورة الخلفية:</label>
+        <input type="file" id="bgImgInput" accept="image/*">
+      </div>
+
+      <div class="input-group">
+        <label><i class="fa-solid fa-music"></i> الموسيقى الخلفية:</label>
+        <input type="file" id="audioInput" accept="audio/*">
+      </div>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>اسم العريس:</label>
+          <input type="text" id="groomInput" value="أحمد">
+        </div>
+        <div class="input-group">
+          <label>اسم العروس:</label>
+          <input type="text" id="brideInput" value="ندى">
+        </div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>التاريخ:</label>
+          <input type="text" id="dateInput" value="12 أكتوبر 2026">
+        </div>
+        <div class="input-group">
+          <label>اليوم:</label>
+          <input type="text" id="dayInput" value="الجمعة">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>المكان / القاعة:</label>
+        <input type="text" id="locationInput" value="دار المدفعية - قاعة الملكة">
+      </div>
+
+      <div class="input-group">
+        <label>الآية القرآنية / الدعوة:</label>
+        <textarea id="quranInput" rows="2">وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً</textarea>
+      </div>
+
+      <div class="action-buttons">
+        <button id="fullscreenBtn" class="btn primary-btn"><i class="fa-solid fa-expand"></i> ملء الشاشة</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- زر تشغيل الصوت -->
+  <button id="musicToggleBtn" class="music-btn" title="تشغيل / إيقاف الموسيقى">
+    <i class="fa-solid fa-music"></i>
+  </button>
+
+  <!-- كارت الدعوة السينمائي -->
+  <main class="card-wrapper">
+    <div class="wedding-card">
+      
+      <!-- طبقة 1: الخلفية المعمارية المتحركة -->
+      <div class="layer background-layer" id="bgLayer"></div>
+
+      <!-- طبقة 2: العروسين (3D Parallax Cutout) -->
+      <div class="layer couple-layer" id="coupleLayer">
+        <img id="coupleImg" src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800" alt="صورة العروسين">
+      </div>
+
+      <!-- طبقة 3: الإطار والتدرج الظلي -->
+      <div class="layer overlay-gradient"></div>
+
+      <!-- طبقة 4: النصوص والزخارف التفاعلية -->
+      <div class="layer content-layer">
+        
+        <div class="arch-frame delay-1">
+          <svg viewBox="0 0 100 60" class="arch-svg">
+            <path d="M 10 60 A 40 40 0 0 1 90 60" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.8"/>
+          </svg>
+        </div>
+
+        <div class="header-subtitle delay-1">يتشرفان بدعوتكم لحضور حفل زفافهما</div>
+
+        <div class="couple-names delay-2">
+          <span id="displayGroom">أحمد</span>
+          <span class="ampersand">&amp;</span>
+          <span id="displayBride">ندى</span>
+        </div>
+
+        <div class="event-details delay-3">
+          <div class="date-badge">
+            <span id="displayDay">الجمعة</span>
+            <span class="dot">•</span>
+            <span id="displayDate">12 أكتوبر 2026</span>
+          </div>
+          <div class="location-badge">
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="displayLocation">دار المدفعية - قاعة الملكة</span>
+          </div>
+        </div>
+
+        <div class="quran-verse delay-4">
+          <p class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+          <p id="displayQuran">"وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً"</p>
+          <p class="sadag">صَدَقَ اللَّهُ الْعَظِيمُ</p>
+        </div>
+
+        <div class="card-actions delay-5">
+          <button id="rsvpModalBtn" class="rsvp-btn">
+            <i class="fa-solid fa-envelope-open-text"></i> تأكيد الحضور والتهنئة
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- نافذة RSVP -->
+  <div class="modal-overlay" id="rsvpModal">
+    <div class="modal-card">
+      <button class="close-modal" id="closeModalBtn">&times;</button>
+      <h3>تأكيد الحضور</h3>
+      <p>يسعدنا مشاركتكم فرحتنا! يرجى تأكيد حضوركم.</p>
+      
+      <form id="rsvpForm">
+        <div class="form-group">
+          <input type="text" placeholder="الاسم الكريم" required id="guestName">
+        </div>
+        <div class="form-group">
+          <select id="attendanceStatus">
+            <option value="yes">سأحضر بكل سرور 🎉</option>
+            <option value="no">أعتذر عن الحضور 🤍</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <textarea id="guestMessage" placeholder="كلمة أو تهنئة للعروسين..." rows="3"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">إرسال التهنئة</button>
+      </form>
+    </div>
+  </div>
+
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-113529.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
